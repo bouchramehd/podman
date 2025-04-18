@@ -1,0 +1,63 @@
+
+services:
+  mysql:
+    build:
+      context: ./mysql
+    container_name: mysql_container
+    networks:
+      - db_network
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=dbname
+    volumes:
+      - db_volume:/var/lib/mysql
+    expose:
+      - "5655"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      retries: 3
+      start_period: 5s
+      timeout: 5s
+
+  app:
+    build:
+      context: ./app
+    container_name: app_container
+    networks:
+      - site_network
+      - db_network
+    environment:
+      - DATABASE_URL=mysql://mysql_container:5655/dbname
+    expose:
+      - "4743"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4743/health"]
+      interval: 10s
+      retries: 3
+      start_period: 5s
+      timeout: 5s
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx_container
+    networks:
+      - site_network
+    ports:
+      - "5423:824"
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+
+networks:
+  db_network:
+  site_network:
+
+volumes:
+  db_volume:

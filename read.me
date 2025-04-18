@@ -1,0 +1,28 @@
+# Podman Project: Nginx Reverse Proxy with App and MySQL
+
+This project demonstrates the use of **Podman** to set up an environment with multiple containers:
+1. **Nginx** as a reverse proxy for routing requests.
+2. **Application (Node.js/Flask)** container running on port 4743.
+3. **MySQL** database for persistent data storage.
+
+The application will be accessible via **Nginx** on `http://localhost:5423`. The `/health` and `/data` routes work correctly, and MySQL data persists even after a container restart.
+
+---
+
+## Requirements
+
+- **Podman** must be installed and running on your machine.
+- **Podman Compose** (for Part 2) can be used if you prefer to manage the setup with Compose.
+
+---
+
+## Part 1: Manual Setup with Script
+
+This part involves running a **manual setup script** to build and start all necessary containers.
+
+### Steps to Run Part 1:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/my-docker-tp.git
+   cd my-docker-tp
